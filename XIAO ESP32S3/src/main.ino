@@ -9,7 +9,6 @@
 
 // make changes as needed
 #define RECORD_TIME   3  // seconds, The maximum value is 240
-#define WAV_FILE_NAME "recording"
 
 // do not change for best
 #define SAMPLE_RATE 16000U
@@ -19,6 +18,7 @@
 
 uint32_t counter = 0;
 bool messagePrinted = false;
+String filename;
 
 void setup() {
   Serial.begin(115200);
@@ -36,23 +36,23 @@ void setup() {
 }
 
 void loop() {
-  char inputChar = Serial.read();
-  if (inputChar == '\n'){
+  if (Serial.available()) {
+    filename = Serial.readStringUntil('\n');
+    filename.trim(); // Remove any trailing whitespace
     delay(500); // add some buffer times
-    record_wav(counter++);
+    record_wav();
     delay(500);
-    Serial.println(counter);
   }
 }
 
-void record_wav(uint32_t counter)
+void record_wav()
 {
   uint32_t sample_size = 0;
   uint32_t record_size = (SAMPLE_RATE * SAMPLE_BITS / 8) * RECORD_TIME;
   uint8_t *rec_buffer = NULL;
-  Serial.printf("Ready to start recording ...\n");
+  Serial.printf("Begin Recording filename: %s\n", filename.c_str());
 
-  File file = SD.open("/" + String(WAV_FILE_NAME) + String(counter) + ".wav", FILE_WRITE);
+  File file = SD.open("/" + filename + ".wav", FILE_WRITE);
   // Write the header to the WAV file
   uint8_t wav_header[WAV_HEADER_SIZE];
   generate_wav_header(wav_header, record_size, SAMPLE_RATE);
@@ -80,13 +80,13 @@ void record_wav(uint32_t counter)
   }
 
   // Write data to the WAV file
-  Serial.printf("Writing to the file ...\n");
+  Serial.printf("Writing to the file...\n");
   if (file.write(rec_buffer, record_size) != record_size)
     Serial.printf("Write file Failed!\n");
 
   free(rec_buffer);
   file.close();
-  Serial.printf("The recording is over.\n");
+  Serial.printf("Done with file: %s.wav", filename.c_str());
 }
 
 void generate_wav_header(uint8_t *wav_header, uint32_t wav_size, uint32_t sample_rate)

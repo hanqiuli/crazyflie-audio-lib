@@ -2,13 +2,15 @@ import time
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.crazyflie.log import LogConfig
+from cflib.crazyflie.syncLogger import SyncLogger
 import keyboard
 
 uri = 'radio://0/80/2M/E7E7E7E7E7'
 
 #use "sudo -E python3 pwm_setter.py" to run this script
 
-motorvar = 5000
+motorvar = 45000
 latest_value = motorvar
 running = True
 motor_on = False
@@ -53,16 +55,32 @@ def set_motor_power(scf, motor_index, pwm_value):
     motor_name = f"motorPowerSet.m{motor_index}"
     scf.cf.param.set_value(motor_name, pwm_value)
 
+def simple_log(scf, logconf):
+
+    with SyncLogger(scf, logconf) as logger:
+
+        for log_entry in logger:
+            data = log_entry[1]
+            logconf_name = log_entry[2]
+            print('[%s]: %s' % (logconf_name, data))
+            break
+
+
 if __name__ == "__main__":
     # Initialize low level drivers
     cflib.crtp.init_drivers()
 
+
+    battery_log = LogConfig(name='pm', period_in_ms=1000)
+    battery_log.add_variable('pm.vbat', 'float')
+
     with SyncCrazyflie(uri, cf=Crazyflie(rw_cache="./cache")) as scf:
 
         print("CONNECTED! Press up/down to increase/decrease motor power, o to toggle motor on/off, n to quit")
-
+        
         while running:
             time.sleep(0.5)
+            simple_log(scf, battery_log)
             if motor_on:
                 set_motor_power(scf, 1, motorvar)
                 set_motor_power(scf, 2, motorvar)
