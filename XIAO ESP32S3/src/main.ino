@@ -50,6 +50,14 @@ void record_wav()
   uint32_t sample_size = 0;
   uint32_t record_size = (SAMPLE_RATE * SAMPLE_BITS / 8) * RECORD_TIME;
   uint8_t *rec_buffer = NULL;
+
+  String base_filename = filename;
+  int file_counter = 1;
+  while (SD.exists("/" + filename + ".wav")) {
+    filename = base_filename + "(" + String(file_counter) + ")";
+    file_counter++;
+  }
+  
   Serial.printf("Begin Recording filename: %s\n", filename.c_str());
 
   File file = SD.open("/" + filename + ".wav", FILE_WRITE);
