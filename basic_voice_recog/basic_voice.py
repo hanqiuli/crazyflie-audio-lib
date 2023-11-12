@@ -8,7 +8,7 @@ def recognize_speech():
     recognizer = sr.Recognizer()
 
     with sr.Microphone() as source:
-        print("Say 'go up' to increase motor power or 'z' to quit.")
+        print("Say 'take off' to take off or press 'z' to quit.")
         recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
 
@@ -34,9 +34,9 @@ if __name__ == "__main__":
     while running:
         spoken_text = recognize_speech()
         
-        if "up" in spoken_text:
+        if "take off" in spoken_text:
             increase_motorvar()
-            print("######################### INCREASED POWER! #########################")
+            print("######################### TAKING OFF! #########################")
         else:
             print(f"!!!!You said \' {spoken_text} \'which is not a command! Try again!!!")
 
