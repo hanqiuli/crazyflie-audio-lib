@@ -43,8 +43,6 @@
 
 #include <I2S.h>
 
-#include <SoftwareSerial.h>
-
 #define SAMPLE_RATE 16000U
 #define SAMPLE_BITS 16
 
