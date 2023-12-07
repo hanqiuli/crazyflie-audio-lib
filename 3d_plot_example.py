@@ -37,10 +37,9 @@ def plot_3d_spectrum(file_paths, x_values):
     plt.show()
 
 # Replace these paths with the actual paths to your WAV files
-file_paths = [ 'recordins/7 Dec 2023 - Penguin Lab\medium30000.1.wav','recordins/7 Dec 2023 - Penguin Lab\medium40000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium45000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium50000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium55000.1.wav']
-
+file_paths = ['recordins/7 Dec 2023 - Penguin Lab\medium15000.1.wav','recordins/7 Dec 2023 - Penguin Lab\medium30000.1.wav','recordins/7 Dec 2023 - Penguin Lab\medium40000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium42500.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium45000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium47500.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium50000.1.wav', 'recordins/7 Dec 2023 - Penguin Lab\medium55000.1.wav']
 
 # Replace these values with your set of 5 numbers for each file
-x_values = [30000, 40000, 45000, 50000, 55000]
+x_values = [15000, 30000, 40000,42500, 45000, 47500, 50000, 55000]
 
 plot_3d_spectrum(file_paths, x_values)
