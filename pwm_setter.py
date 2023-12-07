@@ -10,7 +10,7 @@ uri = 'radio://0/80/2M/E7E7E7E7E7'
 
 #use "sudo -E python3 pwm_setter.py" to run this script
 
-motorvar = 5000
+motorvar = 15000
 latest_value = motorvar
 running = True
 motor_on = False
