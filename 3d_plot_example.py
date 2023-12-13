@@ -28,7 +28,7 @@ def plot_3d_spectrum(file_paths, x_values):
         # Plot the magnitude spectrum
         ax.plot_surface(X, F, 20 * np.log10(D), cmap='viridis', alpha=0.8, label=f'File {i + 1}')
 
-    ax.set_xlabel('WPM Values')
+    ax.set_xlabel('PWM Values')
     ax.set_ylabel('Frequency (Hz)')
     ax.set_zlabel('Magnitude (dB)')
     ax.set_title('3D Frequency Spectrum')
