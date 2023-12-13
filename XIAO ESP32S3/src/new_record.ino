@@ -18,7 +18,7 @@
 #define WAV_FILE_NAME "data"
 
 // do not change for best
-#define SAMPLE_RATE 16000U
+#define SAMPLE_RATE 44100U
 #define SAMPLE_BITS 16
 #define WAV_HEADER_SIZE 44
 #define VOLUME_GAIN 2
@@ -48,7 +48,7 @@ void loop() {
   if (Serial.available() > 0) {
     String command = Serial.readStringUntil('\n');
     command.trim();
-    if (command == "rec") {
+    if (command == "r") {
       isRecording = true;
     } else {
       baseFileName = command;
