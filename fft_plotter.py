@@ -10,7 +10,6 @@ def clean_title(filename):
 
 def read_and_fft(audioFilePath):
     audioData, sampleRate = sf.read(audioFilePath)
-    print(sampleRate, audioFilePath)
     if issubclass(audioData.dtype.type, np.integer):
         audioData = audioData / np.iinfo(audioData.dtype).max
     if len(audioData.shape) == 2:
@@ -24,20 +23,20 @@ def read_and_fft(audioFilePath):
     magnitudeFFT_dB = 20 * np.log10(magnitudeFFT)
     return frequencies[:N // 2], magnitudeFFT_dB
 
-def overlay_ffts(directory, filenames, save_filename='overlay_fft.png'):
+def overlay_ffts_in_directory(directory, save_filename='overlay_fft.png'):
     plt.figure(figsize=(10, 4))
-    for filename in filenames:
-        audioFilePath = os.path.join(directory, filename)
-        
-        # Check if the file exists
-        if not os.path.exists(audioFilePath):
-            print(f"File not found: {audioFilePath}")
-            continue
+    for filename in os.listdir(directory):
+        if filename.endswith('.wav'):
+            audioFilePath = os.path.join(directory, filename)
+            
+            if not os.path.exists(audioFilePath):
+                print(f"File not found: {audioFilePath}")
+                continue
 
-        frequencies, magnitudeFFT_dB = read_and_fft(audioFilePath)
-        plt.plot(frequencies, magnitudeFFT_dB, label=clean_title(filename))
+            frequencies, magnitudeFFT_dB = read_and_fft(audioFilePath)
+            plt.plot(frequencies, magnitudeFFT_dB, label=clean_title(filename), alpha=0.7)
 
-    plt.title('Overlay of FFTs')
+    plt.title('Overlay of FFTs in ' + directory)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Magnitude (dB)')
     plt.grid()
@@ -45,9 +44,9 @@ def overlay_ffts(directory, filenames, save_filename='overlay_fft.png'):
     plt.ylim(-150, 0)
     plt.legend()
     plt.savefig(os.path.join(directory, save_filename))
+    plt.show()
     plt.close()
 
-#Plotting
-directory = 'Recordings'
-filenames = ['7 Dec 2023 - Penguin Lab/Medium/medium47500.1.wav', '7 Dec 2023 - Penguin Lab/Small/smallredo47500.1.wav', '10 Nov 2023 - RSA/47500(1).wav']
-overlay_ffts(directory, filenames, 'fft_comparison.png')
+# Example usage
+directory = 'files_to_plot/'  # Update with the path to your directory
+overlay_ffts_in_directory(directory, 'fft_comparison.png')

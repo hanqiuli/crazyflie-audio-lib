@@ -14,7 +14,7 @@
 #include "SPI.h"
 
 // make changes as needed
-#define RECORD_TIME   10  // seconds, The maximum value is 240
+#define RECORD_TIME   3  // seconds, The maximum value is 240
 #define WAV_FILE_NAME "data"
 
 // do not change for best
