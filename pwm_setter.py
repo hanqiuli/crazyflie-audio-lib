@@ -6,7 +6,7 @@ from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncLogger import SyncLogger
 import keyboard
 
-uri = 'radio://0/80/2M/E7E7E7E7E7'
+uri = 'radio://0/80/2M/E7E7E7E7E8'
 
 #use "sudo -E python3 pwm_setter.py" to run this script
 
