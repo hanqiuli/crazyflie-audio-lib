@@ -18,18 +18,6 @@ weight_S = 19.8
 weight_250MAH = 8.1
 weight_300MAH = 9.4
 
-# Function to calculate intersection point
-def find_intersection(X, Y, weight, battery_weight):
-    for i in range(len(X)):
-        if Y[i] >= weight + battery_weight:
-            return X[i], Y[i]
-
-# Calculate intersection points
-intersection_T = find_intersection(X, y_T, weight_T, weight_250MAH)
-intersection_B = find_intersection(X, y_B, weight_B, weight_250MAH)
-intersection_M = find_intersection(X, y_M, weight_M, weight_250MAH)
-intersection_S = find_intersection(X, y_S, weight_S, weight_250MAH)
-
 # Plotting the data
 plt.figure(figsize=(10, 6))
 
@@ -38,17 +26,11 @@ plt.plot(X, y_B, label='Big', marker='o')
 plt.plot(X, y_M, label='Medium', marker='o')
 plt.plot(X, y_S, label='Small', marker='o')
 
-# Marking intersection points on the graph
-plt.scatter(*intersection_T, color='blue', marker='x', label='Toroidal Intersection')
-plt.scatter(*intersection_B, color='orange', marker='x', label='Big Intersection')
-plt.scatter(*intersection_M, color='green', marker='x', label='Medium Intersection')
-plt.scatter(*intersection_S, color='red', marker='x', label='Small Intersection')
-
-# Adding dashed lines from intersection points to x-axis
-plt.plot([intersection_T[0], intersection_T[0]], [0, intersection_T[1]], linestyle='--', color='blue')
-plt.plot([intersection_B[0], intersection_B[0]], [0, intersection_B[1]], linestyle='--', color='orange')
-plt.plot([intersection_M[0], intersection_M[0]], [0, intersection_M[1]], linestyle='--', color='green')
-plt.plot([intersection_S[0], intersection_S[0]], [0, intersection_S[1]], linestyle='--', color='red')
+# Adding dashed lines for the weight + weight of 250MAH battery
+plt.axhline(y=weight_T + weight_250MAH, linestyle='--', color='blue', label='Toroidal Weight')
+plt.axhline(y=weight_B + weight_250MAH, linestyle='--', color='orange', label='Big Weight')
+plt.axhline(y=weight_M + weight_250MAH, linestyle='--', color='green', label='Medium Weight')
+plt.axhline(y=weight_S + weight_250MAH, linestyle='--', color='red', label='Small Weight')
 
 plt.xlabel('PWM')
 plt.ylabel('Thrust (g)')
