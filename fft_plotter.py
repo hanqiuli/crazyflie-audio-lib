@@ -40,7 +40,7 @@ def overlay_ffts_in_directory(directory, save_filename='overlay_fft.png'):
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Magnitude (dB)')
     plt.grid()
-    plt.xlim(0, 22000)
+    plt.xlim(0, 5000)
     plt.ylim(-150, 0)
     plt.legend()
     plt.savefig(os.path.join(directory, save_filename))
