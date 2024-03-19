@@ -48,5 +48,5 @@ def overlay_ffts_in_directory(directory, save_filename='overlay_fft.png'):
     plt.close()
 
 # Example usage
-directory = 'files_to_plot/'  # Update with the path to your directory
+directory = 'temp_plotting_folder/'  # Update with the path to your directory
 overlay_ffts_in_directory(directory, 'fft_comparison.png')
