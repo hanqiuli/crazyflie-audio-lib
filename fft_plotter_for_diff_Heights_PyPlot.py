@@ -51,7 +51,7 @@ def overlay_ffts_in_directory(directory, smooth_window=10):
             fig.add_trace(go.Scatter(x=frequencies, y=smoothed_magnitudeFFT_dB, mode='lines', name=clean_title(filename), line=dict(color=color)))
 
     fig.update_layout(
-        title='Overlay of Smoothed FFTs',
+        title='Comparison of FFTs',
         xaxis=dict(title='Frequency (Hz)'),
         yaxis=dict(title='Magnitude (dB)'),
         showlegend=True,
@@ -62,5 +62,5 @@ def overlay_ffts_in_directory(directory, smooth_window=10):
     fig.show()
 
 # Example usage
-directory = 'files_to_plot/'  # Update with the path to your directory
+directory = 'overlay_noise_folder/'  # Update with the path to your directory
 overlay_ffts_in_directory(directory, smooth_window=250)
