@@ -62,5 +62,9 @@ def overlay_ffts_in_directory(directory, smooth_window=10):
     fig.show()
 
 # Example usage
+<<<<<<< HEAD
+directory = 'tempor/'#'files_to_plot/'  # Update with the path to your directory
+=======
 directory = 'overlay_noise_folder/'  # Update with the path to your directory
+>>>>>>> 483c0825ef0cb8ffea460eea61e7b151e01b1c64
 overlay_ffts_in_directory(directory, smooth_window=250)
