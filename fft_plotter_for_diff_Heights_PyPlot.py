@@ -62,5 +62,5 @@ def overlay_ffts_in_directory(directory, smooth_window=10):
     fig.show()
 
 # Example usage
-directory = 'files_to_plot/'  # Update with the path to your directory
+directory = 'tempor/'#'files_to_plot/'  # Update with the path to your directory
 overlay_ffts_in_directory(directory, smooth_window=250)
