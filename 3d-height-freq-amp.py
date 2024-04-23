@@ -79,6 +79,7 @@ for prefix, data in categories.items():
     ax.set_title(f'{prefix} - Overlayed FFTs (Amplitude)')
     ax.legend()
     plt.colorbar(sm, ax=ax, label='Height (mm)')
+    ax.set_xlim(0, 8000)
     plt.show()
 
     # Overlayed FFTs for each height in Decibels
@@ -94,6 +95,7 @@ for prefix, data in categories.items():
     ax.set_title(f'{prefix} - Overlayed FFTs (Decibels)')
     ax.legend()
     plt.colorbar(sm, ax=ax, label='Height (mm)')
+    ax.set_xlim(0, 8000)
     plt.show()
 
     unique_heights = sorted(np.unique(data['heights']))
@@ -102,26 +104,26 @@ for prefix, data in categories.items():
     all_amplitudes = np.stack(data['amplitudes_list'], axis=0)
     all_decibels = amplitude_to_decibels(all_amplitudes)
 
-    # Aggregate the frequency bins without any cutoff
-    binned_freqs, binned_amplitudes = aggregate_bins(original_freqs, all_amplitudes, bin_size)
-    _, binned_decibels = aggregate_bins(original_freqs, all_decibels, bin_size)
+    # # Aggregate the frequency bins without any cutoff
+    # binned_freqs, binned_amplitudes = aggregate_bins(original_freqs, all_amplitudes, bin_size)
+    # _, binned_decibels = aggregate_bins(original_freqs, all_decibels, bin_size)
 
     # Aggregate the frequency bins with a 5kHz cutoff
-    binned_freqs_cutoff, binned_amplitudes_cutoff = aggregate_bins(original_freqs, all_amplitudes, bin_size, cutoff=5000)
-    _, binned_decibels_cutoff = aggregate_bins(original_freqs, all_decibels, bin_size, cutoff=5000)
+    binned_freqs_cutoff, binned_amplitudes_cutoff = aggregate_bins(original_freqs, all_amplitudes, 400, cutoff=8000)
+    _, binned_decibels_cutoff = aggregate_bins(original_freqs, all_decibels, 400, cutoff=8000)
 
     # Plot amplitude and decibel heat maps
-    for binned_data, title_suffix in [(binned_amplitudes, "Amplitude"), (binned_decibels, "Decibels")]:
-        fig, ax = plt.subplots(figsize=(12, 8))
-        c = ax.pcolormesh(binned_freqs, unique_heights, binned_data, shading='auto', cmap='Reds_r')
-        ax.set_title(f'{prefix} - {title_suffix} Heat Map with Aggregated Frequency Bins')
-        ax.set_xlabel('Frequency (Hz)')
-        ax.set_ylabel('Height (mm)')
-        fig.colorbar(c, ax=ax, label=title_suffix)
-        plt.show()
+    # for binned_data, title_suffix in [(binned_amplitudes, "Amplitude"), (binned_decibels, "Decibels")]:
+    #     fig, ax = plt.subplots(figsize=(12, 8))
+    #     c = ax.pcolormesh(binned_freqs, unique_heights, binned_data, shading='auto', cmap='Reds_r')
+    #     ax.set_title(f'{prefix} - {title_suffix} Heat Map with Aggregated Frequency Bins')
+    #     ax.set_xlabel('Frequency (Hz)')
+    #     ax.set_ylabel('Height (mm)')
+    #     fig.colorbar(c, ax=ax, label=title_suffix)
+    #     plt.show()
 
     # Plot cutoff amplitude and decibel heat maps
-    for binned_data, title_suffix in [(binned_amplitudes_cutoff, "Amplitude (Cutoff 5kHz)"), (binned_decibels_cutoff, "Decibels (Cutoff 5kHz)")]:
+    for binned_data, title_suffix in [(binned_amplitudes_cutoff, "Amplitude (Cutoff 8kHz)"), (binned_decibels_cutoff, "Decibels (Cutoff 5kHz)")]:
         fig, ax = plt.subplots(figsize=(12, 8))
         c = ax.pcolormesh(binned_freqs_cutoff, unique_heights, binned_data, shading='auto', cmap='Reds_r')
         ax.set_title(f'{prefix} - {title_suffix} Heat Map with Aggregated Frequency Bins')
