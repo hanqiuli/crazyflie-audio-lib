@@ -3,80 +3,77 @@ import numpy as np
 import librosa
 import matplotlib.pyplot as plt
 
-def calculate_power(audio):
-    """Calculate the power of an audio signal."""
-    return np.mean(np.square(audio))
+def calculate_power_spectra(signal):
+    """Calculate the power spectrum of a signal using FFT."""
+    fft_signal = np.fft.fft(signal)
+    power_spectrum = np.abs(fft_signal) ** 2
+    return power_spectrum
 
-def calculate_snr(noise_path, signal_with_noise_path):
-    """Calculate the Signal-to-Noise Ratio (SNR) in dB."""
-    # Load the noise and signal with noise recordings
-    noise, sr_noise = librosa.load(noise_path, sr=None)
-    signal_with_noise, sr_sw_noise = librosa.load(signal_with_noise_path, sr=None)
-    
-    # Ensure the sample rates match
-    if sr_noise != sr_sw_noise:
-        raise ValueError("Sample rates do not match!")
-
-    # Trimming to match the shortest recording
-    min_length = min(len(noise), len(signal_with_noise))
+def calculate_snr(noise, noisy_signal):
+    """Calculate the average spectral SNR after trimming the signals to the same length."""
+    min_length = min(len(noise), len(noisy_signal))
     noise = noise[:min_length]
-    signal_with_noise = signal_with_noise[:min_length]
-
-    # Calculate power for noise and signal with noise
-    power_noise = calculate_power(noise)
-    power_signal_with_noise = calculate_power(signal_with_noise)
-
-    # Estimate the power of the signal alone
-    power_signal = power_signal_with_noise - power_noise
+    noisy_signal = noisy_signal[:min_length]
     
-    # Avoid division by zero or negative signal power
-    if power_signal <= 0:
-        print(f"Non-positive signal power encountered: {power_signal}")
-        return 'Error: Non-positive signal power'
-
-    # Calculate SNR
-    snr_db = 10 * np.log10(power_signal / power_noise)
-    return snr_db
+    power_spectrum_noise = calculate_power_spectra(noise)
+    power_spectrum_noisy_signal = calculate_power_spectra(noisy_signal)
+    power_spectrum_signal = power_spectrum_noisy_signal - power_spectrum_noise
+    power_spectrum_signal[power_spectrum_signal <= 0] = 1e-10  # Avoid log(0) and negative values
+    
+    snr_spectrum = 10 * np.log10(power_spectrum_signal / power_spectrum_noise)
+    mean_snr = np.mean(snr_spectrum)
+    return mean_snr
 
 def calculate_all_snrs(noise_path, signal_with_noises_directory):
+    """Calculate SNRs for all .wav files in a given directory."""
     snrs = []
     filenames = []
 
+    noise, sr_noise = librosa.load(noise_path, sr=None)
     for filename in os.listdir(signal_with_noises_directory):
         if filename.endswith(".wav"):
             full_path = os.path.join(signal_with_noises_directory, filename)
             try:
-                snr = calculate_snr(noise_path, full_path)
-                if isinstance(snr, str):
-                    print(f"Error calculating SNR for {filename}: {snr}")
-                else:
-                    snrs.append(snr)
-                    filenames.append(filename)
+                noisy_signal, sr_noisy = librosa.load(full_path, sr=None)
+                min_length = min(len(noise), len(noisy_signal))
+                noise = noise[:min_length]
+                noisy_signal = noisy_signal[:min_length]
+
+                snr = calculate_snr(noise, noisy_signal)
+                snrs.append(snr)
+                filenames.append(filename)
             except Exception as e:
                 print(f"Failed to process {filename}: {e}")
+    return snrs, filenames
 
-    return snrs, filenames, signal_with_noises_directory
-
-def plot_snrs(snrs, signal_with_noises_directory):
-    plt.figure(figsize=(10, 6))
-    plt.boxplot(snrs, vert=True, patch_artist=True)
-    plt.title("SNR Distribution Across Different Noisy Audios")
+def plot_all_snrs(all_snrs, labels):
+    """Plot all SNR distributions on a single axis with custom x-axis labels."""
+    plt.figure(figsize=(12, 6))  # Adjust size as needed
+    # Plot all SNRs on the same axes
+    positions = range(1, len(all_snrs) + 1)  # Position each box plot
+    plt.boxplot(all_snrs, vert=True, patch_artist=True, positions=positions)
+    
+    # Set x-axis labels
+    plt.xticks(positions, labels)  # Set custom labels for each boxplot
+    plt.title("SNR across multiple microphone heights, normalised to propeller radius")
     plt.ylabel("SNR (dB)")
-    plt.xticks([1], ["Noisy Recordings"])
     plt.grid(True)
 
-    # Calculating statistical data
-    mean_snr = np.mean(snrs)
-    std_snr = np.std(snrs)
-    plt.text(1.1, mean_snr, f'Mean: {mean_snr:.2f} dB', verticalalignment='center')
-    plt.text(1.1, mean_snr + 2 * std_snr, f'+2σ: {mean_snr + 2 * std_snr:.2f} dB', verticalalignment='center')
-    plt.text(1.1, mean_snr - 2 * std_snr, f'-2σ: {mean_snr - 2 * std_snr:.2f} dB', verticalalignment='center')
-
-    plt.savefig("SNR_Calc/" + signal_with_noises_directory + "snr_distribution.png")
+    plt.tight_layout()
+    plt.savefig("snr_distribution.png")
+    plt.show()
+    plt.close()
 
 if __name__ == "__main__":
-    for i in [5, 10, 15, 20]:
-        noise_path = f'SNR_Calc/noise_{i}.wav'
-        signal_with_noises_directory = f'SNR_Calc/go_{i}/'
-        snrs, filenames, signal_with_noises_dir = calculate_all_snrs(noise_path, signal_with_noises_directory)
-        plot_snrs(snrs, signal_with_noises_dir)
+    heights = [5, 10, 15, 20]  # Different scenarios, such as microphone heights
+    labels = ["5%", "10%", "15%", "20%"]  # Labels indicating the normalized heights
+    all_snrs = []
+
+    for height in heights:
+        noise_path = f'SNR_Calc/noise_{height}.wav'
+        signal_with_noises_directory = f'SNR_Calc/go_{height}/'
+        snrs, _ = calculate_all_snrs(noise_path, signal_with_noises_directory)
+        all_snrs.append(snrs)
+
+    plot_all_snrs(all_snrs, labels)
+
