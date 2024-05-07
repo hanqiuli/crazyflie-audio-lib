@@ -67,7 +67,7 @@ if __name__ == "__main__":
     labels = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
     all_snrs = []
 
-    clean_signal_path = 'Recordings/3_May_SwarmLab_with_NewSetup/ORGANIZED/Clean/Clean.clean.1.wav.4t42velb.ingestion-54fbc688b-qbw86.s19'  # Path to the clean signal
+    clean_signal_path = 'Recordings/3_May_SwarmLab_with_NewSetup/ORGANIZED/Clean/Clean.clean.1.wav.4t42velb.ingestion-54fbc688b-qbw86.s7.wav'  # Path to the clean signal
     for height in heights:
         noisy_signals_directory = f'Recordings/3_May_SwarmLab_with_NewSetup/ORGANIZED/Height_{height}/'
         snrs, _ = calculate_all_snrs(clean_signal_path, noisy_signals_directory)

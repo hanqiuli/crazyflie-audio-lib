@@ -3,7 +3,7 @@ import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
-uri = 'radio://0/80/2M/E7E7E7E7E7'
+uri = 'radio://0/80/2M/E7E7E7E7E8'
 pwm_value = 45000
 
 def set_motor_power(scf, motor_index, pwm_value):
