@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "/Users/hanqiulicai/Documents/PlatformIO/Projects/XIAO ESP32S3/.pio/libdeps/seeed_xiao_esp32s3/Unity"
+    "cmake.sourceDirectory": "/Users/hanqiulicai/Documents/PlatformIO/Projects/XIAO ESP32S3/.pio/libdeps/seeed_xiao_esp32s3/Unity",
+    "files.associations": {
+        "*.tcc": "cpp",
+        "fstream": "cpp"
+    }
 }
