@@ -62,5 +62,6 @@ def overlay_ffts_in_directory(directory, smooth_window=10):
     fig.show()
 
 # Example usage C:\Users\moheb\crazyflie-audio-lib\Recordings\3_May_SwarmLab_with_NewSetup\ORGANIZED\Noise
-directory = 'Recordings/3_May_SwarmLab_with_NewSetup/ORGANIZED/Noise/'#'overlay_noise_folder/'  # Update with the path to your directory
+directory = 'Recordings/11_May_SwarmLab_TestConfigs/'
+#'Recordings/3_May_SwarmLab_with_NewSetup/ORGANIZED/Noise/'#'overlay_noise_folder/'  # Update with the path to your directory
 overlay_ffts_in_directory(directory, smooth_window=250)
