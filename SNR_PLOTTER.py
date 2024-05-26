@@ -169,11 +169,11 @@ if __name__ == "__main__":
     snr_dict = {distance: {height: [] for height in heights} for distance in distances}
     snr_dict['orig'] = {height: [] for height in heights}
 
-    clean_signal_path = "Final_RECORDINGS/Clean_Keywords/No_Shroud/Clean.clean.1.wav.4t42velb.ingestion-54fbc688b-qbw86.s9.wav"
+    clean_signal_path = "Final_RECORDINGS/Final_Recordings_SNR/Clean_Keywords/No_Shroud/Clean.clean.1.wav.4t42velb.ingestion-54fbc688b-qbw86.s9.wav"
 
     for height in heights:
         # first process original arm length
-        noisy_signals_directory = f"Final_RECORDINGS/Height_{height}/Original_Arm/"
+        noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_SNR/Height_{height}/Original_Arm/"
         snrs, filenames = calculate_all_snrs(clean_signal_path, noisy_signals_directory)
         snr_dict['orig'][height] = snrs
         print(f"Processed {len(snrs)} files for height {height} and original arm length")
