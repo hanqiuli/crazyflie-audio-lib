@@ -19,7 +19,7 @@ def denoise_audio(noisy_audio_path, output_path):
     
     # Initialize the LMS filter
     n = 64  # Number of taps in the LMS filter
-    lms_filter = pa.filters.FilterLMS(n=n, mu=0.1, w="zeros")
+    lms_filter = pa.filters.FilterLMS(n=n, mu=0.01, w="zeros")
     
     # Prepare the input vector for the LMS filter
     N = len(noisy_audio) - n
@@ -39,6 +39,8 @@ def denoise_audio(noisy_audio_path, output_path):
     print("Estimated Enhanced SNR: ", signaltonoise(e))
 
 # Example usage
-noisy_audio_path = 'Recordings_DUMP/19_May_SwarmLab_RecordWhileFlying/Keyword_LEFT_Proper_clipped.wav'
-output_path = 'Recordings_DUMP/19_May_SwarmLab_RecordWhileFlying/denoised_audio_LEFT_clipped.wav'
+# noisy_audio_path = 'Recordings_DUMP/19_May_SwarmLab_RecordWhileFlying/Keyword_LEFT_Proper_clipped.wav'
+noisy_audio_path = 'Recordings_DUMP/23_May_swarmingLab_3recordings/second_try.1.wav'
+# output_path = 'Recordings_DUMP/19_May_SwarmLab_RecordWhileFlying/denoised_audio_LEFT_clipped.wav'
+output_path = 'Recordings_DUMP/23_May_swarmingLab_3recordings/denoised_audio_second_try.1.wav'
 denoise_audio(noisy_audio_path, output_path)
