@@ -115,15 +115,15 @@ def plot_snr_contour(snr_dict, title, show_plot=False, hover=False, filepath=Non
 
     # Plotting the contour plot
     plt.figure(figsize=(10, 8))
-    contourf = plt.contourf(grid_x, grid_y, grid_z, levels=20, cmap='plasma')
+    contourf = plt.contourf(grid_x, grid_y, grid_z, levels=20, cmap='viridis')
     plt.colorbar(contourf, label='Mean SNR (dB)')
     plt.title(title)
     plt.xlabel('Arm Length [x/R]')
     plt.ylabel('Height [y/R]')
     plt.grid(True)
 
-    # Optional: Add contour lines to highlight levels
-    plt.contour(grid_x, grid_y, grid_z, levels=20, colors='k', linestyles='solid', linewidths=0.3)
+    # # Optional: Add contour lines to highlight levels
+    # plt.contour(grid_x, grid_y, grid_z, levels=20, colors='k', linestyles='solid', linewidths=0.3)
 
     if filepath:
         plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
@@ -169,13 +169,68 @@ def plot_snr_surface(snr_dict, title, show_plot=False, hover=False, filepath=Non
     # Set up a 3D plot
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111, projection='3d')
-    surf = ax.plot_surface(grid_x, grid_y, grid_z, cmap='plasma', edgecolor='none')
+    surf = ax.plot_surface(grid_x, grid_y, grid_z, cmap='viridis', edgecolor='none')
     fig.colorbar(surf, ax=ax, label='Mean SNR (dB)', shrink=0.5, aspect=5)
+
+    # rotate the plot such that origin faces the reader
+    ax.view_init(azim=-150, elev=30)
+
 
     ax.set_title(title)
     ax.set_xlabel('Arm Length [x/R]')
     ax.set_ylabel('Height [y/R]')
     ax.set_zlabel('Mean SNR (dB)')
+
+    if filepath:
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+    else:
+        if hover:
+            plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png")
+        else:
+            plt.savefig("SNR_Plots/3D_surface_plot.png")
+    if show_plot:
+        plt.show()
+    plt.close()
+
+def plot_snr_heatmap(snr_dict, title, show_plot=False, hover=False, filepath=None):
+    """Plot a 3D surface map of mean SNR values with smooth interpolation."""
+    # Create sorted lists of heights and custom mapping for distances with 'orig' represented by a specific value
+    heights = sorted(snr_dict['orig'].keys())
+    distances = sorted([key for key in snr_dict.keys() if key != 'orig'])
+    distance_values = [1.7647] + [float(d) for d in distances]  # Replace distances with numerical values as needed
+
+    # Preparing data for interpolation
+    points = []  # (distance, height) pairs
+    values = []  # SNR values
+    for i, distance in enumerate(['orig'] + distances):
+        for j, height in enumerate(heights):
+            if snr_dict[distance][height]:
+                mean_snr = np.mean(snr_dict[distance][height])
+                points.append((distance_values[i], height))
+                values.append(mean_snr)
+
+    # Converting lists to numpy arrays
+    points = np.array(points)
+    values = np.array(values)
+
+    # Create grid data for interpolation
+    grid_x, grid_y = np.meshgrid(
+        np.linspace(min(distance_values), max(distance_values), 100),
+        np.linspace(min(heights), max(heights), 100)
+    )
+
+    # Interpolate using griddata
+    grid_z = griddata(points, values, (grid_x, grid_y), method='cubic')
+    
+    # Plot 2d heatmap
+    plt.figure(figsize=(12, 8))
+    heatmap = plt.imshow(grid_z, cmap='viridis', aspect='auto', origin='lower',
+                            extent=[min(distance_values), max(distance_values), min(heights), max(heights)])
+    plt.colorbar(heatmap, label='Mean SNR (dB)')
+    plt.title(title)
+    plt.xlabel('Arm Length [x/R]')
+    plt.ylabel('Height [y/R]')
+    plt.grid(True)
 
     if filepath:
         plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
@@ -328,8 +383,9 @@ def newfunc():
         plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Arm Length {distance} [x/R]", filepath="SNR_4Jun/")
 
     # Finally, plot a heatmap of mean SNR values
-    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/")
+    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/", show_plot=True)
     plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Surface", filepath="SNR_4Jun/", show_plot=True)
+    plot_snr_heatmap(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Heatmap", filepath="SNR_4Jun/", show_plot=True)
 
 if __name__ == "__main__":
     newfunc()
