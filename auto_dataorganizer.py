@@ -41,8 +41,8 @@ for filename in os.listdir(source_dir):
             # Print to check the paths
             print(f'Moving {source_file} to {destination_file}')
             
-            # # Move the file to the corresponding directory
-            # shutil.move(source_file, destination_file)
-            # print(f'Moved {filename} to {destination_paths[prefix]}')
+            # Move the file to the corresponding directory
+            shutil.move(source_file, destination_file)
+            print(f'Moved {filename} to {destination_paths[prefix]}')
 
 print('File moving process completed.')

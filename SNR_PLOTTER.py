@@ -290,10 +290,10 @@ def newfunc():
     heights = [0, 0.3, 0.6, 1, 1.3, 1.6, 2, 2.3, 2.6, 3, 3.3, 3.6, 4, 4.3, 4.6, 5]  # Heights to process
     distances = [2, 2.3, 2.6, 3, 3.3, 3.6, 4]
     labels_heights = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
-    labels_distances = ['Baseline'] + [f"{distance} [x/R]" for distance in distances]
+    labels_distances = ['orig'] + [f"{distance} [x/R]" for distance in distances]
 
     snr_dict = {distance: {height: [] for height in heights} for distance in distances}
-    snr_dict['Baseline'] = {height: [] for height in heights}
+    snr_dict['orig'] = {height: [] for height in heights}
 
     clean_signal_directory = "Final_RECORDINGS/Final_Recordings_4Jun/Clean_Keywords/"
 
@@ -301,7 +301,7 @@ def newfunc():
         # first process original arm length
         noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/ArmOrig/"
         snrs, filenames = calculate_all_snrs(clean_signal_directory, noisy_signals_directory)
-        snr_dict['Baseline'][height] = snrs
+        snr_dict['orig'][height] = snrs
         print(f"Processed {len(snrs)} files for height {height} and original arm length")
         for distance in distances:
             try:
@@ -328,8 +328,8 @@ def newfunc():
         plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Arm Length {distance} [x/R]", filepath="SNR_4Jun/")
 
     # Finally, plot a heatmap of mean SNR values
-    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights", filepath="SNR_4Jun/")
-    plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights", filepath="SNR_4Jun/")
+    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/")
+    plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Surface", filepath="SNR_4Jun/", show_plot=True)
 
 if __name__ == "__main__":
     newfunc()
