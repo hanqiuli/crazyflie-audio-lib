@@ -56,7 +56,7 @@ def calculate_all_snrs(clean_signals_directory, noisy_signals_directory):
                 print(f"Failed to process {filename}: {e}")
     return snrs, filenames
 
-def plot_all_snrs(all_snrs, labels, title, show_plot=False, hover=False):
+def plot_all_snrs(all_snrs, labels, title, show_plot=False, hover=False, filepath=None):
     """Plot all SNR distributions on a single axis with custom x-axis labels."""
     plt.figure(figsize=(12, 6))  # Adjust size as needed
     # Plot all SNRs on the same axes
@@ -71,15 +71,19 @@ def plot_all_snrs(all_snrs, labels, title, show_plot=False, hover=False):
     plt.grid(True)
 
     plt.tight_layout()
-    if hover:
-        plt.savefig("SNR_Plots_Hover/" + title.replace(' ', '_').replace('/', '-') + ".png")
+
+    if filepath:
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
     else:
-        plt.savefig("SNR_Plots/" + title.replace(' ', '_').replace('/', '-') + ".png")
+        if hover:
+            plt.savefig("SNR_Plots_Hover/" + title.replace(' ', '_').replace('/', '-') + ".png")
+        else:
+            plt.savefig("SNR_Plots/" + title.replace(' ', '_').replace('/', '-') + ".png")
     if show_plot:
         plt.show()
     plt.close()
 
-def plot_snr_contour(snr_dict, title, show_plot=False, hover=False):
+def plot_snr_contour(snr_dict, title, show_plot=False, hover=False, filepath=None):
     """Plot a 2D contour map of mean SNR values with smooth interpolation."""
     # Create sorted lists of heights and custom mapping for distances with 'orig' represented by a specific value
     heights = sorted(snr_dict['orig'].keys())
@@ -120,16 +124,19 @@ def plot_snr_contour(snr_dict, title, show_plot=False, hover=False):
 
     # Optional: Add contour lines to highlight levels
     plt.contour(grid_x, grid_y, grid_z, levels=20, colors='k', linestyles='solid', linewidths=0.3)
-    
-    if hover:
-        plt.savefig("SNR_Plots_Hover/contour_plot_hover.png")
+
+    if filepath:
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
     else:
-        plt.savefig("SNR_Plots/contour_plot.png")
+        if hover:
+            plt.savefig("SNR_Plots_Hover/contour_plot_hover.png")
+        else:
+            plt.savefig("SNR_Plots/contour_plot.png")
     if show_plot:
         plt.show()
     plt.close()
 
-def plot_snr_surface(snr_dict, title, show_plot=False, hover=False):
+def plot_snr_surface(snr_dict, title, show_plot=False, hover=False, filepath=None):
     """Plot a 3D surface map of mean SNR values with smooth interpolation."""
     # Create sorted lists of heights and custom mapping for distances with 'orig' represented by a specific value
     heights = sorted(snr_dict['orig'].keys())
@@ -170,18 +177,19 @@ def plot_snr_surface(snr_dict, title, show_plot=False, hover=False):
     ax.set_ylabel('Height [y/R]')
     ax.set_zlabel('Mean SNR (dB)')
 
-    if hover:
-        plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png")
+    if filepath:
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
     else:
-        plt.savefig("SNR_Plots/3D_surface_plot.png")
+        if hover:
+            plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png")
+        else:
+            plt.savefig("SNR_Plots/3D_surface_plot.png")
     if show_plot:
         plt.show()
     plt.close()
 
-if __name__ == "__main__":
-
+def oldfunc():
     # hover stuff
-
     heights = [0, 1, 2, 3, 4, 5]  # Heights to process
     distances = [2, 3, 4]
     labels_heights = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
@@ -273,3 +281,55 @@ if __name__ == "__main__":
     # Finally, plot a heatmap of mean SNR values
     plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights")
     plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights")
+
+def newfunc():
+    """
+    Since im lazy, this function is the new version of the oldfunc() function. This will plot the recordings from 4th June 2024.
+    """
+
+    heights = [0, 0.3, 0.6, 1, 1.3, 1.6, 2, 2.3, 2.6, 3, 3.3, 3.6, 4, 4.3, 4.6, 5]  # Heights to process
+    distances = [2, 2.3, 2.6, 3, 3.3, 3.6, 4]
+    labels_heights = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
+    labels_distances = ['Baseline'] + [f"{distance} [x/R]" for distance in distances]
+
+    snr_dict = {distance: {height: [] for height in heights} for distance in distances}
+    snr_dict['Baseline'] = {height: [] for height in heights}
+
+    clean_signal_directory = "Final_RECORDINGS/Final_Recordings_4Jun/Clean_Keywords/"
+
+    for height in heights:
+        # first process original arm length
+        noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/ArmOrig/"
+        snrs, filenames = calculate_all_snrs(clean_signal_directory, noisy_signals_directory)
+        snr_dict['Baseline'][height] = snrs
+        print(f"Processed {len(snrs)} files for height {height} and original arm length")
+        for distance in distances:
+            try:
+                noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/Arm{distance}/"
+                snrs, filenames = calculate_all_snrs(clean_signal_directory, noisy_signals_directory)
+                snr_dict[distance][height] = snrs
+                print(f"Processed {len(snrs)} files for height {height} and arm length {distance}")
+            except Exception as e:
+                print(f"Failed to process height {height} and arm length {distance}: {e}")
+
+    # Now we plot the SNR distributions
+    # First, plot the SNR distributions for each height, varying arm length
+
+    for height in heights:
+        snrs = [snr_dict['orig'][height]] + [snr_dict[distance][height] for distance in distances]
+        plot_all_snrs(snrs, labels_distances, f"SNR Distribution for Height {height} [y/R]", filepath="SNR_4Jun/")
+    
+    # Next, plot the SNR distributions for each arm length, varying height
+    # first the original arm length
+    snrs = [snr_dict['orig'][height] for height in heights]
+    plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Original Arm Length x/R", filepath="SNR_4Jun/")
+    for distance in distances:
+        snrs = [snr_dict[distance][height] for height in heights]
+        plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Arm Length {distance} [x/R]", filepath="SNR_4Jun/")
+
+    # Finally, plot a heatmap of mean SNR values
+    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights", filepath="SNR_4Jun/")
+    plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights", filepath="SNR_4Jun/")
+
+if __name__ == "__main__":
+    newfunc()
