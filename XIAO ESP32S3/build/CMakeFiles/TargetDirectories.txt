@@ -1,0 +1,7 @@
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/unity.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/edit_cache.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/rebuild_cache.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/list_install_components.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/install.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/install/local.dir
+/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build/CMakeFiles/install/strip.dir

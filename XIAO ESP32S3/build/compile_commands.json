@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/cc -I\"/Users/hanqiulicai/Documents/PlatformIO/Projects/XIAO ESP32S3/.pio/libdeps/seeed_xiao_esp32s3/Unity/src\" -I\"/Users/hanqiulicai/Desktop/crazyflie-audio-lib/XIAO ESP32S3/build\" -g -std=c11 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk -o CMakeFiles/unity.dir/src/unity.c.o -c \"/Users/hanqiulicai/Documents/PlatformIO/Projects/XIAO ESP32S3/.pio/libdeps/seeed_xiao_esp32s3/Unity/src/unity.c\"",
+  "file": "/Users/hanqiulicai/Documents/PlatformIO/Projects/XIAO ESP32S3/.pio/libdeps/seeed_xiao_esp32s3/Unity/src/unity.c",
+  "output": "CMakeFiles/unity.dir/src/unity.c.o"
+}
+]

@@ -14,11 +14,11 @@
 #include "SPI.h"
 
 // make changes as needed
-#define RECORD_TIME  2 // seconds, The maximum value is 240
+#define RECORD_TIME  10 // seconds, The maximum value is 240
 #define WAV_FILE_NAME "data"
 
 // do not change for best
-#define SAMPLE_RATE 16000U
+#define SAMPLE_RATE 44100U
 #define SAMPLE_BITS 16
 #define WAV_HEADER_SIZE 44
 #define VOLUME_GAIN 2
@@ -45,24 +45,31 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    String command = Serial.readStringUntil('\n');
-    command.trim();
-    if (command == "rec") {
-      isRecording = true;
+  static String inputString = ""; // A string to hold the incoming data
+  while (Serial.available() > 0) {
+    char incomingByte = Serial.read();
+    if (incomingByte == '\n') {
+      inputString.trim(); // Remove any trailing whitespace
+      if (inputString == "rec") {
+        isRecording = true;
+      } else {
+        baseFileName = inputString;
+        fileNumber = 1; // Reset file number each time a new base file name is set
+        Serial.printf(baseFileName.c_str());
+        Serial.printf(" is the new label\n");
+      }
+      inputString = ""; // Clear the string
     } else {
-      baseFileName = command;
-      fileNumber = 1; // reset file number each time a new base file name is set
-      Serial.printf(baseFileName.c_str());
-      Serial.printf(" is the new label\n");
+      inputString += incomingByte; // Add the character to the string
+      Serial.print(incomingByte); // Echo the character back to the serial monitor
     }
-
   }
+
   if (isRecording && baseFileName != "") {
     String fileName = "/" + baseFileName + "." + String(fileNumber) + ".wav";
     fileNumber++;
     record_wav(fileName);
-    delay(1000); // delay to avoid recording multiple files at once
+    delay(1000); // Delay to avoid recording multiple files at once
     isRecording = false;
   }
 }

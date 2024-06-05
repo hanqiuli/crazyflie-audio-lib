@@ -67,7 +67,7 @@ def plot_all_snrs(all_snrs, labels, title, show_plot=False, hover=False):
     plt.xticks(positions, labels)  # Set custom labels for each boxplot
     plt.title(title)
     plt.ylabel("SNR (dB)")
-    plt.ylim(-50, 0)
+    # plt.ylim(-40, -10)
     plt.grid(True)
 
     plt.tight_layout()
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     # Next, plot the SNR distributions for each arm length, varying height
     # first the original arm length
     snrs = [snr_dict['orig'][height] for height in heights]
-    plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Original Arm Length x/R")
+    plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Original Arm Length x/R", hover=True)
     for distance in distances:
         snrs = [snr_dict[distance][height] for height in heights]
         plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Arm Length {distance} [x/R]", hover=True)
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     #non-hover stuff
 
     heights = [0, 1, 2, 3, 4, 5, 6, 7]  # Heights to process
-    distances = [2, 3, 4]
+    distances = [2, 3, 3.66, 4]
     labels_heights = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
     labels_distances = ['orig'] + [f"{distance} [x/R]" for distance in distances]
 

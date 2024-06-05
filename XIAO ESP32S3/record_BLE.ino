@@ -9,7 +9,7 @@
 #include <WiFi.h>
 
 // Constants
-#define RECORD_TIME   180  // seconds, The maximum value is 240
+#define RECORD_TIME   60  // seconds, The maximum value is 240
 #define SAMPLE_RATE 16000U
 #define SAMPLE_BITS 16
 #define WAV_HEADER_SIZE 44
