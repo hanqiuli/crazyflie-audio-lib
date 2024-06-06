@@ -60,20 +60,21 @@ def plot_all_snrs(all_snrs, labels, title, show_plot=False, hover=False, filepat
     """Plot all SNR distributions on a single axis with custom x-axis labels."""
     plt.figure(figsize=(12, 6))  # Adjust size as needed
     # Plot all SNRs on the same axes
-    positions = range(1, len(all_snrs) + 1)  # Position each box plot
+    positions = range(1, len(all_snrs) + 1)# Position each box plot
     plt.boxplot(all_snrs, vert=True, patch_artist=True, positions=positions)
     
     # Set x-axis labels
     plt.xticks(positions, labels)  # Set custom labels for each boxplot
     plt.title(title)
     plt.ylabel("SNR (dB)")
-    # plt.ylim(-40, -10)
+    plt.ylim(-60, -15)
     plt.grid(True)
 
     plt.tight_layout()
 
+
     if filepath:
-        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png", dpi=300)
     else:
         if hover:
             plt.savefig("SNR_Plots_Hover/" + title.replace(' ', '_').replace('/', '-') + ".png")
@@ -126,7 +127,7 @@ def plot_snr_contour(snr_dict, title, show_plot=False, hover=False, filepath=Non
     # plt.contour(grid_x, grid_y, grid_z, levels=20, colors='k', linestyles='solid', linewidths=0.3)
 
     if filepath:
-        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png", dpi=300)
     else:
         if hover:
             plt.savefig("SNR_Plots_Hover/contour_plot_hover.png")
@@ -182,7 +183,7 @@ def plot_snr_surface(snr_dict, title, show_plot=False, hover=False, filepath=Non
     ax.set_zlabel('Mean SNR (dB)')
 
     if filepath:
-        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png", dpi=300)
     else:
         if hover:
             plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png")
@@ -233,15 +234,86 @@ def plot_snr_heatmap(snr_dict, title, show_plot=False, hover=False, filepath=Non
     plt.grid(True)
 
     if filepath:
-        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png", dpi=300)
     else:
         if hover:
-            plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png")
+            plt.savefig("SNR_Plots_Hover/3D_surface_plot_hover.png", dpi=300)
         else:
             plt.savefig("SNR_Plots/3D_surface_plot.png")
     if show_plot:
         plt.show()
     plt.close()
+
+# def plot_all_snrs_subfigs(all_snrs_by_arm, labels, title, show_plot=False, filepath=None):
+#     """Plot all SNR distributions for different arms as subfigures in a single figure."""
+#     num_arms = len(all_snrs_by_arm)
+#     fig, axs = plt.subplots(num_arms, 1, figsize=(12, 6 * num_arms))  # Create subplots
+
+#     for i, (arm_length, all_snrs) in enumerate(all_snrs_by_arm.items()):
+#         ax = axs[i]
+#         positions = range(1, len(all_snrs) + 1)
+#         ax.boxplot(all_snrs, vert=True, patch_artist=True, positions=positions)
+
+#         # Set x-axis labels
+#         ax.set_xticks(positions)
+#         ax.set_xticklabels(labels)  # Set custom labels for each boxplot
+#         ax.set_title(f"SNR Distribution for Arm Length {arm_length} [x/R]")
+#         ax.set_ylabel("SNR (dB)")
+#         ax.set_ylim(-60, -15)
+#         ax.grid(True)
+
+#     fig.suptitle(title, y=0.92, fontsize=16)
+#     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+#     if filepath:
+#         plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
+#     if show_plot:
+#         plt.show()
+#     plt.close()
+
+def plot_all_snrs_subfigs(all_snrs_by_arm, labels, title, show_plot=False, filepath=None):
+    """Plot all SNR distributions for different arms as grouped boxplots in a single figure."""
+    num_arms = len(all_snrs_by_arm)
+    arm_lengths = list(all_snrs_by_arm.keys())
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Colors for each arm length
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    positions = np.arange(1, len(labels) + 1)
+    width = 0.5  # Width of each boxplot
+
+    for i, arm_length in enumerate(arm_lengths):
+        # Offset positions for each arm length
+        offset_positions = positions + (i - num_arms / 2) * width
+        # Boxplot for the current arm length
+        bp = ax.boxplot(all_snrs_by_arm[arm_length], positions=positions, widths=width, patch_artist=True,
+                        boxprops=dict(facecolor=colors[i], color=colors[i]),
+                        capprops=dict(color=colors[i]),
+                        whiskerprops=dict(color=colors[i]),
+                        flierprops=dict(color=colors[i], markeredgecolor=colors[i]),
+                        medianprops=dict(color='black'),
+                        showfliers=False)
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(labels)
+    ax.set_title(title)
+    ax.set_ylabel("SNR (dB)")
+    ax.set_ylim(-60, -15)
+    ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray', alpha=0.7)
+
+    # Legend
+    legend_handles = [plt.Line2D([0], [0], color=color, lw=4) for color in colors]
+    legend_labels = [f'Arm {arm_length}' for arm_length in arm_lengths]
+    ax.legend(legend_handles, legend_labels, title='Arm Length', loc='upper right')
+
+    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+    if filepath:
+        plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png", dpi=300)
+    if show_plot:
+        plt.show()
+    plt.close()
+
 
 def oldfunc():
     # hover stuff
@@ -386,6 +458,19 @@ def newfunc():
     plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/", show_plot=True)
     plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Surface", filepath="SNR_4Jun/", show_plot=True)
     plot_snr_heatmap(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Heatmap", filepath="SNR_4Jun/", show_plot=True)
+
+    # Grouped boxplots for the specified arm lengths
+
+    arm_lengths = ['orig', 2, 3, 4]
+    all_snrs_by_arm = {}
+    for arm_length in arm_lengths:
+        if arm_length == 'orig':
+            snrs = [snr_dict['orig'][height] for height in heights]
+        else:
+            snrs = [snr_dict[arm_length][height] for height in heights]
+        all_snrs_by_arm[arm_length] = snrs
+    
+    plot_all_snrs_subfigs(all_snrs_by_arm, labels_heights, "Grouped SNR Distributions by Arm Length", filepath="SNR_4Jun/", show_plot=True)
 
 if __name__ == "__main__":
     newfunc()
