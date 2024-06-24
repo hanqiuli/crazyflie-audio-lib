@@ -119,16 +119,16 @@ void loop() {
                pred_label = result.classification[ix].label;
           }
         }
-        // Display inference result
-        if (pred_label == "left" && pred_value > 0.97){
-            digitalWrite(LED_BUILT_IN, HIGH); // Turn on
-        }
-        else if(pred_label == "right" && pred_value > 0.97){
-            digitalWrite(LED_BUILT_IN, LOW); // Turn off
-        }
-        else{
-            digitalWrite(LED_BUILT_IN, LOW); // Turn off
-        }
+        // // Display inference result
+        // if (pred_label == "left" && pred_value > 0.97){
+        //     digitalWrite(LED_BUILT_IN, HIGH); // Turn on
+        // }
+        // else if(pred_label == "right" && pred_value > 0.97){
+        //     digitalWrite(LED_BUILT_IN, LOW); // Turn off
+        // }
+        // else{
+        //     digitalWrite(LED_BUILT_IN, LOW); // Turn off
+        // }
 
         sendBLENotification(pred_label.c_str());
 
