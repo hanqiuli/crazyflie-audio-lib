@@ -244,33 +244,6 @@ def plot_snr_heatmap(snr_dict, title, show_plot=False, hover=False, filepath=Non
         plt.show()
     plt.close()
 
-# def plot_all_snrs_subfigs(all_snrs_by_arm, labels, title, show_plot=False, filepath=None):
-#     """Plot all SNR distributions for different arms as subfigures in a single figure."""
-#     num_arms = len(all_snrs_by_arm)
-#     fig, axs = plt.subplots(num_arms, 1, figsize=(12, 6 * num_arms))  # Create subplots
-
-#     for i, (arm_length, all_snrs) in enumerate(all_snrs_by_arm.items()):
-#         ax = axs[i]
-#         positions = range(1, len(all_snrs) + 1)
-#         ax.boxplot(all_snrs, vert=True, patch_artist=True, positions=positions)
-
-#         # Set x-axis labels
-#         ax.set_xticks(positions)
-#         ax.set_xticklabels(labels)  # Set custom labels for each boxplot
-#         ax.set_title(f"SNR Distribution for Arm Length {arm_length} [x/R]")
-#         ax.set_ylabel("SNR (dB)")
-#         ax.set_ylim(-60, -15)
-#         ax.grid(True)
-
-#     fig.suptitle(title, y=0.92, fontsize=16)
-#     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-
-#     if filepath:
-#         plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + ".png")
-#     if show_plot:
-#         plt.show()
-#     plt.close()
-
 def plot_all_snrs_subfigs(all_snrs_by_arm, labels, title, show_plot=False, filepath=None):
     """Plot all SNR distributions for different arms as grouped boxplots in a single figure."""
     num_arms = len(all_snrs_by_arm)
@@ -313,6 +286,63 @@ def plot_all_snrs_subfigs(all_snrs_by_arm, labels, title, show_plot=False, filep
     if show_plot:
         plt.show()
     plt.close()
+
+def plot_shroud_vs_no_shroud(all_snrs_by_arm, all_snrs_by_arm_shroud, labels, title, show_plot=False, filepath=None):
+
+    # Create a figure for each arm length
+    num_arms = len(all_snrs_by_arm)
+    arm_lengths = list(all_snrs_by_arm.keys())
+
+    for i, arm_length in enumerate(arm_lengths):
+        # plot the SNR distributions, with and without shroud, for the current arm length
+        fig, ax = plt.subplots(figsize=(12, 8))
+
+        positions = np.arange(1, len(labels) + 1)
+        width = 0.5
+
+        # Offset positions for each arm length
+        offset_positions = positions - width / 2
+        # Boxplot for the current arm length without shroud
+
+        bp = ax.boxplot(all_snrs_by_arm[arm_length], positions=offset_positions, widths=width, patch_artist=True,
+                        boxprops=dict(facecolor='blue', color='blue'),
+                        capprops=dict(color='blue'),
+                        whiskerprops=dict(color='blue'),
+                        flierprops=dict(color='blue', markeredgecolor='blue'),
+                        medianprops=dict(color='black'),
+                        showfliers=False)
+        
+        # Offset positions for each arm length
+        offset_positions = positions + width / 2
+        # Boxplot for the current arm length with shroud
+        bp_2 = ax.boxplot(all_snrs_by_arm_shroud[arm_length], positions=offset_positions, widths=width, patch_artist=True,
+                        boxprops=dict(facecolor='red', color='red'),
+                        capprops=dict(color='red'),
+                        whiskerprops=dict(color='red'),
+                        flierprops=dict(color='red', markeredgecolor='red'),
+                        medianprops=dict(color='black'),
+                        showfliers=False)
+        
+        ax.set_xticks(positions)
+        ax.set_xticklabels(labels)
+        ax.set_title(f"{title} - Arm Length {arm_length}")
+        ax.set_ylabel("SNR (dB)")
+        ax.set_ylim(-60, -15)
+        ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray', alpha=0.7)
+
+        # Legend
+        legend_handles = [plt.Line2D([0], [0], color=color, lw=4) for color in ['blue', 'red']]
+        legend_labels = ['No Shroud', 'Shroud']
+        ax.legend(legend_handles, legend_labels, title='Shroud', loc='upper right')
+
+        fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+        if filepath:
+            plt.savefig(filepath + title.replace(' ', '_').replace('/', '-') + f"_Arm_{arm_length}.png", dpi=300)
+        if show_plot:
+            plt.show()
+        plt.close()
+
 
 
 def oldfunc():
@@ -416,28 +446,50 @@ def newfunc():
 
     heights = [0, 0.3, 0.6, 1, 1.3, 1.6, 2, 2.3, 2.6, 3, 3.3, 3.6, 4, 4.3, 4.6, 5]  # Heights to process
     distances = [2, 2.3, 2.6, 3, 3.3, 3.6, 4]
+    distances_shroud = [2, 3, 4]
+
     labels_heights = [f"{height} [y/R]" for height in heights]  # Custom labels for each boxplot
     labels_distances = ['orig'] + [f"{distance} [x/R]" for distance in distances]
 
     snr_dict = {distance: {height: [] for height in heights} for distance in distances}
     snr_dict['orig'] = {height: [] for height in heights}
+    snr_dict_shroud = {distance: {height: [] for height in heights} for distance in distances_shroud}
+    snr_dict_shroud['orig'] = {height: [] for height in heights}
 
-    clean_signal_directory = "Final_RECORDINGS/Final_Recordings_4Jun/Clean_Keywords/"
+    clean_signal_directory = "Final_RECORDINGS/Final_SNR_Recordings/No_Shroud/Clean_Keywords/"
+    clean_signal_directory_shroud = "Final_RECORDINGS/Final_SNR_Recordings/Shroud/Clean_Keywords/"
 
     for height in heights:
         # first process original arm length
-        noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/ArmOrig/"
+        noisy_signals_directory = f"Final_RECORDINGS/Final_SNR_Recordings/No_Shroud/Height_{height}/ArmOrig/"
         snrs, filenames = calculate_all_snrs(clean_signal_directory, noisy_signals_directory)
         snr_dict['orig'][height] = snrs
         print(f"Processed {len(snrs)} files for height {height} and original arm length")
         for distance in distances:
             try:
-                noisy_signals_directory = f"Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/Arm{distance}/"
+                noisy_signals_directory = f"Final_RECORDINGS/Final_SNR_Recordings/No_Shroud/Height_{height}/Arm{distance}/"
                 snrs, filenames = calculate_all_snrs(clean_signal_directory, noisy_signals_directory)
                 snr_dict[distance][height] = snrs
                 print(f"Processed {len(snrs)} files for height {height} and arm length {distance}")
             except Exception as e:
                 print(f"Failed to process height {height} and arm length {distance}: {e}")
+
+    # shroud recordings
+    for height in heights:
+        # first process original arm length
+        noisy_signals_directory_shroud = f"Final_RECORDINGS/Final_SNR_Recordings/Shroud/Height_{height}/ArmOrig/"
+        snrs, filenames = calculate_all_snrs(clean_signal_directory_shroud, noisy_signals_directory_shroud)
+        snr_dict_shroud['orig'][height] = snrs
+        print(f"Processed {len(snrs)} files for height {height} and original arm length, shroud")
+        for distance in distances_shroud:
+            try:
+                noisy_signals_directory_shroud = f"Final_RECORDINGS/Final_SNR_Recordings/Shroud/Height_{height}/Arm{distance}/"
+                snrs, filenames = calculate_all_snrs(clean_signal_directory_shroud, noisy_signals_directory_shroud)
+                snr_dict_shroud[distance][height] = snrs
+                print(f"Processed {len(snrs)} files for height {height} and arm length {distance}, shroud")
+            except Exception as e:
+                print(f"Failed to process height {height} and arm length {distance}, shroud: {e}")
+
 
     # Now we plot the SNR distributions
     # First, plot the SNR distributions for each height, varying arm length
@@ -471,6 +523,24 @@ def newfunc():
         all_snrs_by_arm[arm_length] = snrs
     
     plot_all_snrs_subfigs(all_snrs_by_arm, labels_heights, "Grouped SNR Distributions by Arm Length", filepath="SNR_4Jun/", show_plot=True)
+
+    # Plot shroud versus no shroud for specified arm lengths
+    arm_lengths = ['orig', 2, 3, 4]
+    all_snrs_by_arm_shroud = {}
+    all_snrs_by_arm_no_shroud = {}
+
+    for arm_length in arm_lengths:
+        if arm_length == 'orig':
+            snrs_shroud = [snr_dict_shroud['orig'][height] for height in heights]
+            snrs_no_shroud = [snr_dict['orig'][height] for height in heights]
+        else:
+            snrs_shroud = [snr_dict_shroud[arm_length][height] for height in heights]
+            snrs_no_shroud = [snr_dict[arm_length][height] for height in heights]
+        all_snrs_by_arm_shroud[arm_length] = snrs_shroud
+        all_snrs_by_arm_no_shroud[arm_length] = snrs_no_shroud
+
+    plot_shroud_vs_no_shroud(all_snrs_by_arm_no_shroud, all_snrs_by_arm_shroud, labels_heights, "Shroud vs No Shroud SNR Distributions by Arm Length", show_plot=True)
+
 
 if __name__ == "__main__":
     newfunc()

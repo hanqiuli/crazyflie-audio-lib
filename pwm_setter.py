@@ -4,16 +4,16 @@ from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncLogger import SyncLogger
-import keyboard
+# import keyboard
 
-uri = 'radio://0/80/2M/E7E7E7E7E8'
+uri = 'radio://0/80/2M/E7E7E7E7E7'
 
 #use "sudo -E python3 pwm_setter.py" to run this script
 
 motorvar = 42500
 latest_value = motorvar
 running = True
-motor_on = False
+motor_on = True
 
 def increase_motorvar(e):
     global motorvar
@@ -42,10 +42,10 @@ def quit_loop(e):
     global running
     running = False
 
-keyboard.on_press_key("up", increase_motorvar)
-keyboard.on_press_key("down", decrease_motorvar)
-keyboard.on_press_key("o", toggle_motorvar)
-keyboard.on_press_key("n", quit_loop)
+# keyboard.on_press_key("up", increase_motorvar)
+# keyboard.on_press_key("down", decrease_motorvar)
+# keyboard.on_press_key("o", toggle_motorvar)
+# keyboard.on_press_key("n", quit_loop)
 
 def set_motor_power(scf, motor_index, pwm_value):
 

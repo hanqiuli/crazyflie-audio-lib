@@ -3,6 +3,7 @@ import shutil
 
 # Define the source directory
 source_dir = 'Final_RECORDINGS/Final_Recordings_4Jun/SPLIT/'
+target_dir = 'Final_RECORDINGS/Final_SNR_Recordings/Shroud/'
 
 heights = [0, 0.3, 0.6, 1, 1.3, 1.6, 2, 2.3, 2.6, 3, 3.3, 3.6, 4, 4.3, 4.6, 5]  # Heights to process
 distances = [1, 2, 2.3, 2.6, 3, 3.3, 3.6, 4] # distances to process
@@ -17,9 +18,9 @@ for height in heights:
         prefix = f'{distancestring}_{heightstring}'
         if distance == 1:
             # original arm length
-            destination_paths[prefix] = f'Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/ArmOrig'
+            destination_paths[prefix] = target_dir + f'Height_{height}/ArmOrig'
         else:
-            destination_paths[prefix] = f'Final_RECORDINGS/Final_Recordings_4Jun/Height_{height}/Arm{distance}'
+            destination_paths[prefix] = target_dir + f'Height_{height}/Arm{distance}'
 
 
 # Ensure all destination directories exist
@@ -32,6 +33,12 @@ for filename in os.listdir(source_dir):
         # Get the prefix of the filename up to the first dot
         prefix = filename.split('.')[0]
         
+        # if prefix starts with s_, then it is a shroud file
+        if prefix.startswith('s_'):
+            prefix = prefix[2:]
+        else:
+            continue
+
         # Check if the prefix is in the destination_paths dictionary
         if prefix in destination_paths:
             # Define the full source and destination paths
