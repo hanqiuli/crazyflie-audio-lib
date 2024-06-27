@@ -2,11 +2,12 @@ import os
 import shutil
 
 # Define the source directory
-source_dir = 'Final_RECORDINGS/Final_Recordings_4Jun/SPLIT/'
+source_dir = 'Recordings_DUMP/26_June_SwarmLab_ALL_Shrouds/Splitted/'
 target_dir = 'Final_RECORDINGS/Final_SNR_Recordings/Shroud/'
 
 heights = [0, 0.3, 0.6, 1, 1.3, 1.6, 2, 2.3, 2.6, 3, 3.3, 3.6, 4, 4.3, 4.6, 5]  # Heights to process
-distances = [1, 2, 2.3, 2.6, 3, 3.3, 3.6, 4] # distances to process
+# distances = [1, 2, 2.3, 2.6, 3, 3.3, 3.6, 4] # distances to process
+distances = [0, 2, 3, 4]
 
 destination_paths = {}
 
@@ -16,7 +17,7 @@ for height in heights:
         heightstring = str(height).replace('.', ',')
         distancestring = str(distance).replace('.', ',')
         prefix = f'{distancestring}_{heightstring}'
-        if distance == 1:
+        if distance in [0, 1]:
             # original arm length
             destination_paths[prefix] = target_dir + f'Height_{height}/ArmOrig'
         else:

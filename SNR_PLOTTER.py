@@ -457,7 +457,7 @@ def newfunc():
     snr_dict_shroud['orig'] = {height: [] for height in heights}
 
     clean_signal_directory = "Final_RECORDINGS/Final_SNR_Recordings/No_Shroud/Clean_Keywords/"
-    clean_signal_directory_shroud = "Final_RECORDINGS/Final_SNR_Recordings/Shroud/Clean_Keywords/"
+    clean_signal_directory_shroud = "Final_RECORDINGS/Final_SNR_Recordings/No_Shroud/Clean_Keywords/"
 
     for height in heights:
         # first process original arm length
