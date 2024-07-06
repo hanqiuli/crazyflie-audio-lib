@@ -507,9 +507,9 @@ def newfunc():
         plot_all_snrs(snrs, labels_heights, f"SNR Distribution for Arm Length {distance} [x/R]", filepath="SNR_4Jun/")
 
     # Finally, plot a heatmap of mean SNR values
-    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/", show_plot=True)
-    plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Surface", filepath="SNR_4Jun/", show_plot=True)
-    plot_snr_heatmap(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Heatmap", filepath="SNR_4Jun/", show_plot=True)
+    plot_snr_contour(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Contour", filepath="SNR_4Jun/", show_plot=False)
+    plot_snr_surface(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Surface", filepath="SNR_4Jun/", show_plot=False)
+    plot_snr_heatmap(snr_dict, "Mean SNR Values for Different Arm Lengths and Heights - Heatmap", filepath="SNR_4Jun/", show_plot=False)
 
     # Grouped boxplots for the specified arm lengths
 
@@ -522,7 +522,7 @@ def newfunc():
             snrs = [snr_dict[arm_length][height] for height in heights]
         all_snrs_by_arm[arm_length] = snrs
     
-    plot_all_snrs_subfigs(all_snrs_by_arm, labels_heights, "Grouped SNR Distributions by Arm Length", filepath="SNR_4Jun/", show_plot=True)
+    plot_all_snrs_subfigs(all_snrs_by_arm, labels_heights, "Grouped SNR Distributions by Arm Length", filepath="SNR_4Jun/", show_plot=False)
 
     # Plot shroud versus no shroud for specified arm lengths
     arm_lengths = ['orig', 2, 3, 4]
@@ -539,7 +539,7 @@ def newfunc():
         all_snrs_by_arm_shroud[arm_length] = snrs_shroud
         all_snrs_by_arm_no_shroud[arm_length] = snrs_no_shroud
 
-    plot_shroud_vs_no_shroud(all_snrs_by_arm_no_shroud, all_snrs_by_arm_shroud, labels_heights, "Shroud vs No Shroud SNR Distributions by Arm Length", show_plot=True)
+    plot_shroud_vs_no_shroud(all_snrs_by_arm_no_shroud, all_snrs_by_arm_shroud, labels_heights, "Shroud vs No Shroud SNR Distributions by Arm Length", show_plot=False, filepath="SNR_4Jun/")
 
 
 if __name__ == "__main__":
